@@ -1,0 +1,26 @@
+{% block content %}
+<h1>Language Sensing and Translation</h1>
+<p>Welcome!</p>
+
+<form method=POST action="output/">
+{% csrf_token %}
+<h4>Insert text:</h4>
+<textarea id="pt" name="pt" rows="8" cols="100">
+</textarea>
+<button type="submit">Translate</button>
+</form>
+
+<form method=POST action="output/" enctype="multipart/form-data">
+{% csrf_token %}
+<h4>Upload file:</h4>
+<input type="file" id="myfile" name="myfile"/>
+<input type="submit" value="Translate"/>
+</form>
+
+<form method=POST action="output/">
+{% csrf_token %}
+<h4>Capture Image:</h4>
+<button id ="cap" name="cap" type="submit">Capture</button>
+</form>
+
+{% endblock %}
