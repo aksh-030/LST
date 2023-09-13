@@ -1,26 +1,181 @@
-{% block content %}
-<h1>Language Sensing and Translation</h1>
-<p>Welcome!</p>
+{% load static %}
 
-<form method=POST action="output/">
-{% csrf_token %}
-<h4>Insert text:</h4>
-<textarea id="pt" name="pt" rows="8" cols="100">
-</textarea>
-<button type="submit">Translate</button>
-</form>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Language Sensing and Translation</title>
+    <!-- Add FontAwesome CSS -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.0/css/all.min.css">
+</head>
+<body>
+    <style>
+        /* styles.css */
+        .intro-paragraph {
+            font-size: 16px; /* Adjust the font size */
+            color: black; /* Change the text color */
+            margin-top: 40px; /* Add top margin for spacing */
+            text-align: center; /* Center-align the text */
+        }
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 0;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 50px;
+            text-align: center;
+            background-color: #fff;
+            border: 1px solid #cccccc;
+            border-radius: 5px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
 
-<form method=POST action="output/" enctype="multipart/form-data">
-{% csrf_token %}
-<h4>Upload file:</h4>
-<input type="file" id="myfile" name="myfile"/>
-<input type="submit" value="Translate"/>
-</form>
+        h1 {
+            font-size: 40px;
+            margin-bottom: 10px;
+            color: #333;
+        }
 
-<form method=POST action="output/">
-{% csrf_token %}
-<h4>Capture Image:</h4>
-<button id ="cap" name="cap" type="submit">Capture</button>
-</form>
+        h4 {
+            font-size: 18px;
+            margin-bottom: 10px;
+            color: #444;
+        }
 
-{% endblock %}
+        .text-input,
+        .file-input {
+            width: 100%;
+            padding: 10px;
+            margin: 10px 0;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+
+        .translate-button,
+        .capture-button {
+            padding: 15px 30px; /* Increase button padding for expansion */
+            font-size: 20px; /* Enlarge button font size */
+            background-color: #007bff;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        .file-label {
+            font-size: 14px;
+            color: #777;
+            margin-right: 10px;
+        }
+
+        /* Add more styles as needed */
+
+        /* Update .nav-buttons to display as a flex column */
+        .nav-buttons {
+            margin-top: 20px;
+            display: flex;
+            flex-direction: row;
+            flex: 10; /* Display buttons in a column */
+            align-items: center; /* Center-align the buttons horizontally */
+        }
+
+        .nav-button {
+            cursor: pointer;
+            margin: 80px; /* Add vertical spacing between buttons */
+            display: flex;
+            align-items: center; /* Center-align icon and text */
+        }
+
+        .nav-button i {
+            font-size: 36px; /* Increase icon size */
+            margin-right: 10px; /* Add spacing between icon and text */
+        }
+    </style>
+
+    <div class="container">
+        <h1>Language Sensing and Translation</h1>
+        <p class="intro-paragraph">
+            Welcome to our Language Sensing and Translation application. 
+            This powerful tool allows you to easily translate text, upload files for translation, 
+            and even capture text from images. Get started by selecting one of the options below:
+        </p>
+
+        <div class="nav-buttons">
+            <!-- Navigation buttons using FontAwesome icons -->
+            <div class="nav-button" id="insert-text-button">
+                <i class="fas fa-pen"></i>
+                <p>Insert Text</p>
+            </div>
+
+            <div class="nav-button" id="upload-file-button">
+                <i class="fas fa-upload"></i>
+                <p>Upload File</p>
+            </div>
+
+            <div class="nav-button" id="capture-image-button">
+                <i class="fas fa-camera"></i>
+                <p>Capture Image</p>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
+
+        <!-- Forms hidden by default -->
+        <form method="POST" action="output/" class="translate-form" id="insert-text-form" style="display: none;">
+            {% csrf_token %}
+            <h4>Insert text:</h4>
+            <textarea id="pt" name="pt" rows="8" cols="100" class="text-input"></textarea>
+            <button type="submit" class="translate-button">Translate</button>
+        </form>
+
+        <form method="POST" action="output/" enctype="multipart/form-data" class="translate-form" id="upload-file-form" style="display: none;">
+            {% csrf_token %}
+            <h4>Upload file:</h4>
+            <label for="myfile" class="file-label">Choose a file:</label>
+            <input type="file" id="myfile" name="myfile" class="file-input"/>
+            <input type="submit" value="Translate" class="translate-button"/>
+        </form>
+
+        <form method="POST" action="output/" class="translate-form" id="capture-image-form" style="display: none;">
+            {% csrf_token %}
+            <h4>Capture Image:</h4>
+            <button id="cap" name="cap" type="submit" class="capture-button">Capture</button>
+        </form>
+    </div>
+
+    <script>
+        // JavaScript to handle navigation
+        const insertTextButton = document.getElementById("insert-text-button");
+        const uploadFileButton = document.getElementById("upload-file-button");
+        const captureImageButton = document.getElementById("capture-image-button");
+
+        const insertTextForm = document.getElementById("insert-text-form");
+        const uploadFileForm = document.getElementById("upload-file-form");
+        const captureImageForm = document.getElementById("capture-image-form");
+
+        insertTextButton.addEventListener("click", () => {
+            insertTextForm.style.display = "block";
+            uploadFileForm.style.display = "none";
+            captureImageForm.style.display = "none";
+        });
+
+        uploadFileButton.addEventListener("click", () => {
+            insertTextForm.style.display = "none";
+            uploadFileForm.style.display = "block";
+            captureImageForm.style.display = "none";
+        });
+
+        captureImageButton.addEventListener("click", () => {
+            insertTextForm.style.display = "none";
+            uploadFileForm.style.display = "none";
+            captureImageForm.style.display = "block";
+        });
+    </script>
+</body>
+</html>
